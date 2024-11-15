@@ -7,20 +7,17 @@ import {
     VStack,
 } from "@gluestack-ui/themed";
 
-import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
-
 import BackgroundImg from "@assets/background.png";
 import Logo from "@assets/logo.svg";
-
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { useNavigation } from "@react-navigation/native";
 
-export function SignIn() {
-    const navigation = useNavigation<AuthNavigatorRoutesProps>();
+export function SignUp() {
+    const navigation = useNavigation();
 
-    function handleNewAccount() {
-        navigation.navigate("signUp");
+    function handleGoBack() {
+        navigation.goBack();
     }
 
     return (
@@ -46,9 +43,10 @@ export function SignIn() {
                         </Text>
                     </Center>
 
-                    <Center gap="$2">
-                        <Heading color="$gray100">Acesse sua conta</Heading>
+                    <Center flex={1} gap="$2">
+                        <Heading color="$gray100">Crie sua conta</Heading>
 
+                        <Input placeholder="Nome" />
                         <Input
                             placeholder="E-mail"
                             keyboardType="email-address"
@@ -56,24 +54,15 @@ export function SignIn() {
                         />
                         <Input placeholder="Senha" secureTextEntry />
 
-                        <Button title="Acessar" />
+                        <Button title="Criar e acessar" />
                     </Center>
 
-                    <Center flex={1} justifyContent="flex-end" marginTop="$4">
-                        <Text
-                            color="$gray100"
-                            fontSize="$sm"
-                            fontFamily="$body"
-                            marginBottom="$1"
-                        >
-                            Ainda não tem acesso?
-                        </Text>
-                        <Button
-                            title="Criar conta"
-                            variant="outline"
-                            onPress={handleNewAccount}
-                        />
-                    </Center>
+                    <Button
+                        title="Voltar para login"
+                        variant="outline"
+                        mt={"$12"}
+                        onPress={handleGoBack}
+                    />
                 </VStack>
             </VStack>
         </ScrollView>
