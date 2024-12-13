@@ -12,9 +12,30 @@
             "backgroundColor": "#ffffff"
         },
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "infoPlist": {
+                "NSAppTransportSecurity": {
+                    "NSExceptionDomains": {
+                        "localhost": {
+                            "NSExceptionAllowsInsecureHTTPLoads": true,
+                            "NSIncludesSubdomains": true
+                        },
+                        "127.0.0.1": {
+                            "NSExceptionAllowsInsecureHTTPLoads": true,
+                            "NSIncludesSubdomains": true
+                        }
+                    }
+                }
+            }
         },
         "android": {
+            "networkSecurityConfig": {
+                "cleartextTrafficPermitted": true,
+                "hostnameVerification": {
+                    "localhost": true,
+                    "127.0.0.1": true
+                }
+            },
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#ffffff"

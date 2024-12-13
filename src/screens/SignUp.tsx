@@ -1,9 +1,11 @@
+import { useState } from "react";
 import {
     Center,
     Heading,
     Image,
     ScrollView,
     Text,
+    useToast,
     VStack,
 } from "@gluestack-ui/themed";
 import { useForm, Controller } from "react-hook-form";
@@ -12,11 +14,18 @@ import { useNavigation } from "@react-navigation/native";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+import { api } from "@services/api";
+
+import { AppError } from "@utils/AppError";
+
+import { useAuth } from "@hooks/useAuth";
+
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
 import BackgroundImg from "@assets/background.png";
 import Logo from "@assets/logo.svg";
+import { ToastMessage } from "@components/ToastMessage";
 
 type FormDataProps = {
     name: string;
@@ -44,6 +53,12 @@ const signUpSchema = yup.object({
 export function SignUp() {
     const navigation = useNavigation();
 
+    const toast = useToast();
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { signIn } = useAuth();
+
     const {
         control,
         handleSubmit,
@@ -56,12 +71,35 @@ export function SignUp() {
         navigation.goBack();
     }
 
-    function handleSignUp({
-        name,
-        email,
-        password,
-        password_confirm,
-    }: FormDataProps) {}
+    async function handleSignUp({ name, email, password }: FormDataProps) {
+        try {
+            setIsLoading(true);
+            await api.post("/users", {
+                name,
+                email,
+                password,
+            });
+            await signIn(email, password);
+        } catch (error) {
+            setIsLoading(false);
+            const isAppError = error instanceof AppError;
+            const title = isAppError
+                ? error.message
+                : "Não foi possível criar a conta. Tente novamente mais tarde.";
+
+            toast.show({
+                placement: "top",
+                render: ({ id }) => (
+                    <ToastMessage
+                        id={id}
+                        title={title}
+                        action="error"
+                        onClose={() => toast.close(id)}
+                    />
+                ),
+            });
+        }
+    }
 
     return (
         <ScrollView
@@ -152,6 +190,7 @@ export function SignUp() {
                         <Button
                             title="Criar e acessar"
                             onPress={handleSubmit(handleSignUp)}
+                            isLoading={isLoading}
                         />
                     </Center>
 

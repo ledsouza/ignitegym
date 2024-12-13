@@ -9,9 +9,14 @@ import {
 import { ChevronRight } from "lucide-react-native";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 
-type Props = TouchableOpacityProps;
+import { api } from "@services/api";
+import { ExerciseDTO } from "@dtos/ExerciseDTO";
 
-export function ExerciseCard({ ...props }: Props) {
+type Props = TouchableOpacityProps & {
+    data: ExerciseDTO;
+};
+
+export function ExerciseCard({ data, ...props }: Props) {
     return (
         <TouchableOpacity {...props}>
             <HStack
@@ -23,7 +28,7 @@ export function ExerciseCard({ ...props }: Props) {
             >
                 <Image
                     source={{
-                        uri: "https://www.hipertrofia.org/blog/wp-content/uploads/2023/04/dumbbell-biceps-curl-reverse.gif",
+                        uri: `${api.defaults.baseURL}/exercise/thumb/${data.thumb}`,
                     }}
                     alt="Imagem do exercício"
                     w="$16"
@@ -39,7 +44,7 @@ export function ExerciseCard({ ...props }: Props) {
                         color="$white"
                         fontFamily="$heading"
                     >
-                        Puxada frontal
+                        {data.name}
                     </Heading>
                     <Text
                         fontSize="$sm"
@@ -47,7 +52,7 @@ export function ExerciseCard({ ...props }: Props) {
                         mt="$1"
                         numberOfLines={2}
                     >
-                        3 séries x 12 repetições
+                        {data.series} séries x {data.repetitions} repetições
                     </Text>
                 </VStack>
 
