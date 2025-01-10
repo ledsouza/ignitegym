@@ -4,9 +4,10 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { VStack, HStack, Text, Heading, useToast } from "@gluestack-ui/themed";
 
+import { ExerciseDTO } from "@dtos/ExerciseDTO";
+
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
-import { ExerciseDTO } from "@dtos/ExerciseDTO";
 
 import { Group } from "@components/Group";
 import { HomeHeader } from "@components/HomeHeader";
@@ -23,7 +24,7 @@ export function Home() {
 
     const [exercises, setExercises] = useState<ExerciseDTO[]>([]);
     const [groups, setGroups] = useState<string[]>([]);
-    const [groupSelected, setGroupSelected] = useState("Costas");
+    const [groupSelected, setGroupSelected] = useState("");
 
     function handleOpenExerciseDetails(exerciseId: string) {
         navigation.navigate("exercise", { exerciseId });
@@ -31,7 +32,6 @@ export function Home() {
 
     async function fetchGroups() {
         try {
-            setIsLoading(true);
             const response = await api.get("/groups");
             setGroups(response.data);
         } catch (error) {
@@ -51,13 +51,12 @@ export function Home() {
                 ),
                 placement: "top",
             });
-        } finally {
-            setIsLoading(false);
         }
     }
 
     async function fetchExercisesByGroup() {
         try {
+            setIsLoading(true);
             const response = await api.get(
                 `/exercises/bygroup/${groupSelected}`
             );
@@ -79,12 +78,20 @@ export function Home() {
                 ),
                 placement: "top",
             });
+        } finally {
+            setIsLoading(false);
         }
     }
 
     useEffect(() => {
         fetchGroups();
     }, []);
+
+    useEffect(() => {
+        if (groups.length > 0) {
+            setGroupSelected(groups[0]);
+        }
+    }, [groups]);
 
     useFocusEffect(
         useCallback(() => {
